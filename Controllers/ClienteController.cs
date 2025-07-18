@@ -1,4 +1,5 @@
-﻿using BankAPI.Data;
+﻿
+using BankAPI.Data;
 using BankAPI.Data.BankModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,15 +9,28 @@ namespace BankAPI.Controllers
     [Route("controller")]
     public class ClienteController : ControllerBase
     {
-        private readonly BancoContext _bancoContext;
-        public ClienteController(BancoContext bancoContexto)
+        private readonly BancoDbContext _bancoDbContext;
+        public ClienteController(BancoDbContext bancoDbContext)
         {
-            _bancoContext = bancoContexto;
+            _bancoDbContext = bancoDbContext;
         }
         [HttpGet]
-        public IEnumerable<Cliente> ObtenerTodo() 
-        { 
-            return _bancoContext.Clientes.ToList();
+        public IEnumerable<Client> ObtenerTodo()
+        {
+            return _bancoDbContext.Clients.ToList();
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult<Client> ObtenerPorId(int id)
+        {
+            var cliente = _bancoDbContext.Clients.Find(id);
+
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(cliente);
         }
     }
 }
