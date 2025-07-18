@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BankAPI.Controllers
 {
     [ApiController]
-    [Route("controller")]
+    [Route("[controller]")]
     public class ClienteController : ControllerBase
     {
         private readonly BancoDbContext _bancoDbContext;
@@ -31,6 +31,15 @@ namespace BankAPI.Controllers
             }
 
             return Ok(cliente);
+        }
+
+        [HttpPost]
+        public IActionResult Crear(Client cliente) 
+        { 
+            _bancoDbContext.Clients.Add(cliente);
+            _bancoDbContext.SaveChanges();
+
+            return CreatedAtAction(nameof(ObtenerPorId), new {id = cliente.Id}, cliente);
         }
     }
 }
