@@ -41,5 +41,29 @@ namespace BankAPI.Controllers
 
             return CreatedAtAction(nameof(ObtenerPorId), new {id = cliente.Id}, cliente);
         }
+
+        [HttpPut("{id}")]
+        public IActionResult Actualizar(int id, Client cliente)
+        {
+            if (id != cliente.Id)
+            {
+                return BadRequest();
+            }
+
+            var ExisteCliente = _bancoDbContext.Clients.Find(id);
+
+            if (ExisteCliente == null)
+            {
+                return NotFound();
+            }
+
+            ExisteCliente.Name = cliente.Name;
+            ExisteCliente.PhoneNumber = cliente.PhoneNumber;
+            ExisteCliente.Email = cliente.Email;
+
+            _bancoDbContext.SaveChanges();
+
+            return NoContent();
+        }
     }
 }
