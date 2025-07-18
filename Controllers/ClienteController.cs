@@ -65,5 +65,21 @@ namespace BankAPI.Controllers
 
             return NoContent();
         }
+
+        [HttpDelete("{id}")]
+        public IActionResult Eliminar(int id)
+        {
+            var ExisteCliente = _bancoDbContext.Clients.Find(id);
+
+            if (ExisteCliente == null)
+            {
+                return NotFound();
+            }
+
+            _bancoDbContext.Clients.Remove(ExisteCliente);
+            _bancoDbContext.SaveChanges();
+
+            return Ok();
+        }
     }
 }
