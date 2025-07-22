@@ -1,6 +1,7 @@
 ﻿using BankAPI.Data;
 using BankAPI.Data.BankModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BankAPI.Services;
 public class ClienteServicio
@@ -12,28 +13,27 @@ public class ClienteServicio
         _bancoDbContext = bancoDbContext; 
     }
 
-    public IEnumerable<Client> ObtenerTodo()
+    public async Task<IEnumerable<Client>> ObtenerTodo()
     {
-        return _bancoDbContext.Clients.ToList();
+        return await _bancoDbContext.Clients.ToListAsync();
     }
 
-    public Client? ObtenerPorId(int id)
+    public async Task<Client?> ObtenerPorId(int id)
     {
-        return _bancoDbContext.Clients.Find(id);
-
+        return await _bancoDbContext.Clients.FindAsync(id);
     }
 
-    public Client Crear(Client nuevoCliente)
+    public async Task<Client> Crear(Client nuevoCliente)
     {
         _bancoDbContext.Clients.Add(nuevoCliente);
-        _bancoDbContext.SaveChanges();
+        await _bancoDbContext.SaveChangesAsync();
 
-        return  nuevoCliente;
+        return nuevoCliente;
     }
 
-    public void Actualizar(int id, Client cliente)
+    public async Task Actualizar(int id, Client cliente)
     {
-        var ExisteCliente = ObtenerPorId(id);
+        var ExisteCliente = await ObtenerPorId(id);
 
         if (ExisteCliente is not null)
         {
@@ -41,18 +41,18 @@ public class ClienteServicio
             ExisteCliente.PhoneNumber = cliente.PhoneNumber;
             ExisteCliente.Email = cliente.Email;
 
-            _bancoDbContext.SaveChanges();
+            await _bancoDbContext.SaveChangesAsync();
         }
     }
 
-    public void Eliminar(int id)
+    public async Task Eliminar(int id)
     {
-        var eliminarCliente = _bancoDbContext.Clients.Find(id);
+        var eliminarCliente = await ObtenerPorId(id);
 
         if (eliminarCliente is not null)
         {
             _bancoDbContext.Clients.Remove(eliminarCliente);
-            _bancoDbContext.SaveChanges();
+            await _bancoDbContext.SaveChangesAsync();
 
         }
     }
