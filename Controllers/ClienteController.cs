@@ -15,15 +15,15 @@ namespace BankAPI.Controllers
             _clienteServicio = servicio;
         }
         [HttpGet]
-        public IEnumerable<Client> ObtenerTodo()
+        public async Task<IEnumerable<Client>> ObtenerTodo()
         {
-            return _clienteServicio.ObtenerTodo();
+            return await _clienteServicio.ObtenerTodo();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Client> ObtenerPorId(int id)
+        public async Task<ActionResult<Client>> ObtenerPorId(int id)
         {
-            var cliente = _clienteServicio.ObtenerPorId(id);
+            var cliente = await _clienteServicio.ObtenerPorId(id);
 
             if (cliente == null)
             {
@@ -34,26 +34,26 @@ namespace BankAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Crear(Client cliente) 
+        public async Task<IActionResult> Crear(Client cliente) 
         {
-            var nuevoCliente = _clienteServicio.Crear(cliente);
+            var nuevoCliente = await _clienteServicio.Crear(cliente);
 
             return CreatedAtAction(nameof(ObtenerPorId), new {id = nuevoCliente.Id}, nuevoCliente);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Actualizar(int id, Client cliente)
+        public async Task<IActionResult> Actualizar(int id, Client cliente)
         {
             if (id != cliente.Id)
             {
                 return BadRequest();
             }
 
-            var actualizarCliente = _clienteServicio.ObtenerPorId(id);
+            var actualizarCliente = await _clienteServicio.ObtenerPorId(id);
 
             if (actualizarCliente is not null)
             {
-                _clienteServicio.Actualizar(id, cliente);
+                await _clienteServicio.Actualizar(id, cliente);
                  return NoContent();
             }else
             {
@@ -63,13 +63,13 @@ namespace BankAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Eliminar(int id)
+        public async Task<IActionResult> Eliminar(int id)
         {
-            var eliminarCliente = _clienteServicio.ObtenerPorId(id);
+            var eliminarCliente = await _clienteServicio.ObtenerPorId(id);
 
             if (eliminarCliente is not null)
             {
-                _clienteServicio.Eliminar(id);
+                await _clienteServicio.Eliminar(id);
                 return Ok();
             }
             else
