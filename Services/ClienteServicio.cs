@@ -33,7 +33,7 @@ public class ClienteServicio
 
     public void Actualizar(int id, Client cliente)
     {
-        var ExisteCliente = _bancoDbContext.Clients.Find(id);
+        var ExisteCliente = ObtenerPorId(id);
 
         if (ExisteCliente is not null)
         {

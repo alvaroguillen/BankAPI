@@ -1,5 +1,5 @@
 ﻿
-using BankAPI.Data;
+using BankAPI.Services;
 using BankAPI.Data.BankModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,21 +9,21 @@ namespace BankAPI.Controllers
     [Route("[controller]")]
     public class ClienteController : ControllerBase
     {
-        private readonly BancoDbContext _bancoDbContext;
-        public ClienteController(BancoDbContext bancoDbContext)
+        private readonly ClienteServicio _clienteServicio;
+        public ClienteController(ClienteServicio servicio)
         {
-            _bancoDbContext = bancoDbContext;
+            _clienteServicio = servicio;
         }
         [HttpGet]
         public IEnumerable<Client> ObtenerTodo()
         {
-            return _bancoDbContext.Clients.ToList();
+            return _clienteServicio.ObtenerTodo();
         }
 
         [HttpGet("{id}")]
         public ActionResult<Client> ObtenerPorId(int id)
         {
-            var cliente = _bancoDbContext.Clients.Find(id);
+            var cliente = _clienteServicio.ObtenerPorId(id);
 
             if (cliente == null)
             {
@@ -35,11 +35,10 @@ namespace BankAPI.Controllers
 
         [HttpPost]
         public IActionResult Crear(Client cliente) 
-        { 
-            _bancoDbContext.Clients.Add(cliente);
-            _bancoDbContext.SaveChanges();
+        {
+            var nuevoCliente = _clienteServicio.Crear(cliente);
 
-            return CreatedAtAction(nameof(ObtenerPorId), new {id = cliente.Id}, cliente);
+            return CreatedAtAction(nameof(ObtenerPorId), new {id = nuevoCliente.Id}, nuevoCliente);
         }
 
         [HttpPut("{id}")]
@@ -50,36 +49,33 @@ namespace BankAPI.Controllers
                 return BadRequest();
             }
 
-            var ExisteCliente = _bancoDbContext.Clients.Find(id);
+            var actualizarCliente = _clienteServicio.ObtenerPorId(id);
 
-            if (ExisteCliente == null)
+            if (actualizarCliente is not null)
+            {
+                _clienteServicio.Actualizar(id, cliente);
+                 return NoContent();
+            }else
             {
                 return NotFound();
             }
 
-            ExisteCliente.Name = cliente.Name;
-            ExisteCliente.PhoneNumber = cliente.PhoneNumber;
-            ExisteCliente.Email = cliente.Email;
-
-            _bancoDbContext.SaveChanges();
-
-            return NoContent();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Eliminar(int id)
         {
-            var ExisteCliente = _bancoDbContext.Clients.Find(id);
+            var eliminarCliente = _clienteServicio.ObtenerPorId(id);
 
-            if (ExisteCliente == null)
+            if (eliminarCliente is not null)
+            {
+                _clienteServicio.Eliminar(id);
+                return Ok();
+            }
+            else
             {
                 return NotFound();
             }
-
-            _bancoDbContext.Clients.Remove(ExisteCliente);
-            _bancoDbContext.SaveChanges();
-
-            return Ok();
         }
     }
 }
