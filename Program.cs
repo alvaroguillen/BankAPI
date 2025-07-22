@@ -9,7 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 //DbContext
-builder.Services.AddSqlServer<BancoContext>(builder.Configuration.GetConnectionString("BancoConnection"));
+builder.Services.AddSqlServer<BancoDbContext>(builder.Configuration.GetConnectionString("BancoConnection"));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
