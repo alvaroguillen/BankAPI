@@ -1,4 +1,5 @@
 using BankAPI.Data;
+using BankAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 //DbContext
 builder.Services.AddSqlServer<BancoDbContext>(builder.Configuration.GetConnectionString("BancoConnection"));
+//Capa de servicio (Service Layer)
+builder.Services.AddScoped<ClienteServicio>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
