@@ -1,5 +1,6 @@
 ﻿using BankAPI.Data;
 using BankAPI.Data.BankModels;
+using BankAPI.Data.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace BankAPI.Services
@@ -23,23 +24,29 @@ namespace BankAPI.Services
             return await _bancoDbContext.Accounts.FindAsync(id);
         }
 
-        public async Task<Account> Crear(Account nuevaCuenta)
+        public async Task<Account> Crear(CuentaDTO nuevaCuentaDTO)
         {
+            var nuevaCuenta = new Account();
+
+            nuevaCuenta.AccountType = nuevaCuentaDTO.AccountType;
+            nuevaCuenta.ClientId = nuevaCuentaDTO.ClientId;
+            nuevaCuenta.Balance = nuevaCuentaDTO.Balance;
+
             _bancoDbContext.Accounts.Add(nuevaCuenta);
             await _bancoDbContext.SaveChangesAsync();
 
             return nuevaCuenta;
         }
 
-        public async Task Actualizar(int id, Account cuenta)
+        public async Task Actualizar(int id, CuentaDTO cuentaDTO)
         {
             var ExisteCuenta = await ObtenerPorId(id);
 
             if (ExisteCuenta is not null)
             {
-                ExisteCuenta.AccountType = cuenta.AccountType;
-                ExisteCuenta.ClientId = cuenta.ClientId;
-                ExisteCuenta.Balance= cuenta.Balance;
+                ExisteCuenta.AccountType = cuentaDTO.AccountType;
+                ExisteCuenta.ClientId = cuentaDTO.ClientId;
+                ExisteCuenta.Balance= cuentaDTO.Balance;
 
                 await _bancoDbContext.SaveChangesAsync();
             }
