@@ -13,6 +13,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSqlServer<BancoDbContext>(builder.Configuration.GetConnectionString("BancoConnection"));
 //Capa de servicio (Service Layer)
 builder.Services.AddScoped<ClienteServicio>();
+builder.Services.AddScoped<CuentaServicio>();
+builder.Services.AddScoped<TipoCuentaServicio>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
