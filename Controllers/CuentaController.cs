@@ -1,4 +1,5 @@
 ﻿using BankAPI.Data.BankModels;
+using BankAPI.Data.DTOs;
 using BankAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,38 +40,38 @@ namespace BankAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Crear(Account cuenta)
+        public async Task<IActionResult> Crear(CuentaDTO cuentaDTO)
         {
-            string ResultadoValidacion = await ValidacionCuenta(cuenta);
+            string ResultadoValidacion = await ValidacionCuenta(cuentaDTO);
             if (!ResultadoValidacion.Equals("valido"))
             {
                 return BadRequest(new { message = ResultadoValidacion });
             }
-            var nuevaCuenta = await cuentaServicio.Crear(cuenta);
+            var nuevaCuenta = await cuentaServicio.Crear(cuentaDTO);
 
             return CreatedAtAction(nameof(ObtenerPorId), new { id = nuevaCuenta.Id }, nuevaCuenta);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Actualizar(int id, Account cuenta)
+        public async Task<IActionResult> Actualizar(int id, CuentaDTO cuentaDTO)
         {
-            if (id != cuenta.Id)
+            if (id != cuentaDTO.Id)
             {
-                return BadRequest(new { message = $"El ID({id}) de la URL no coincide con el ID({cuenta.Id}) del cuerpo de la solicitud." });
+                return BadRequest(new { message = $"El ID({id}) de la URL no coincide con el ID({cuentaDTO.Id}) del cuerpo de la solicitud." });
             }
 
             var actualizarCuenta = await cuentaServicio.ObtenerPorId(id);
 
             if (actualizarCuenta is not null)
             {
-                string ResultadoValidacion = await ValidacionCuenta(cuenta);
+                string ResultadoValidacion = await ValidacionCuenta(cuentaDTO);
 
                 if (!ResultadoValidacion.Equals("valido"))
                 {
                     return BadRequest(new { message = ResultadoValidacion });
                 }
 
-                await cuentaServicio.Actualizar(id, cuenta);
+                await cuentaServicio.Actualizar(id, cuentaDTO);
                 return NoContent();
             }
             else
@@ -101,19 +102,19 @@ namespace BankAPI.Controllers
             return NotFound(new { message = $"La cuenta con ID = {id} no existe." });
         }
 
-        public async Task<string> ValidacionCuenta(Account cuenta)
+        public async Task<string> ValidacionCuenta(CuentaDTO cuentaDTO)
         {
             string resultado = "valido";
-            var tipoCuenta = await tipoCuentaServicio.ObtenerPorId(cuenta.AccountType);
+            var tipoCuenta = await tipoCuentaServicio.ObtenerPorId(cuentaDTO.AccountType);
             
             if (tipoCuenta is null)
             {
-                resultado = $"El tipo de cuenta {cuenta.AccountType} no existe.";
+                resultado = $"El tipo de cuenta {cuentaDTO.AccountType} no existe.";
             }
 
-            var clienteID = cuenta.ClientId.GetValueOrDefault();
+            var clienteID = cuentaDTO.ClientId.GetValueOrDefault();
 
-            var cliente = clienteServicio.ObtenerPorId(clienteID);
+            var cliente = await clienteServicio.ObtenerPorId(clienteID);
 
             if (cliente is null)
             {
