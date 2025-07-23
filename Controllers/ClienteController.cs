@@ -27,7 +27,7 @@ namespace BankAPI.Controllers
 
             if (cliente == null)
             {
-                return NotFound();
+                return ClientNotFound(id);
             }
 
             return Ok(cliente);
@@ -46,7 +46,7 @@ namespace BankAPI.Controllers
         {
             if (id != cliente.Id)
             {
-                return BadRequest();
+                return BadRequest(new {message = $"El ID({id}) de la URL no coincide con el ID({cliente.Id}) del cuerpo de la solicitud."});
             }
 
             var actualizarCliente = await _clienteServicio.ObtenerPorId(id);
@@ -57,7 +57,7 @@ namespace BankAPI.Controllers
                  return NoContent();
             }else
             {
-                return NotFound();
+                return ClientNotFound(id);
             }
 
         }
@@ -74,8 +74,13 @@ namespace BankAPI.Controllers
             }
             else
             {
-                return NotFound();
+                return ClientNotFound(id);
             }
+        }
+
+        public NotFoundObjectResult ClientNotFound(int id)
+        {
+            return NotFound(new { message = $"El cliente con ID = {id} no existe."});
         }
     }
 }
