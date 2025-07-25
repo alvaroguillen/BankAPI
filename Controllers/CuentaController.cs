@@ -40,7 +40,7 @@ namespace BankAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Crear(CuentaDTO cuentaDTO)
+        public async Task<IActionResult> Crear(CuentaDtoIn cuentaDTO)
         {
             string ResultadoValidacion = await ValidacionCuenta(cuentaDTO);
             if (!ResultadoValidacion.Equals("valido"))
@@ -53,7 +53,7 @@ namespace BankAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Actualizar(int id, CuentaDTO cuentaDTO)
+        public async Task<IActionResult> Actualizar(int id, CuentaDtoIn cuentaDTO)
         {
             if (id != cuentaDTO.Id)
             {
@@ -102,7 +102,7 @@ namespace BankAPI.Controllers
             return NotFound(new { message = $"La cuenta con ID = {id} no existe." });
         }
 
-        public async Task<string> ValidacionCuenta(CuentaDTO cuentaDTO)
+        public async Task<string> ValidacionCuenta(CuentaDtoIn cuentaDTO)
         {
             string resultado = "valido";
             var tipoCuenta = await tipoCuentaServicio.ObtenerPorId(cuentaDTO.AccountType);

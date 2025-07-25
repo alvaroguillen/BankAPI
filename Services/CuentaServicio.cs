@@ -24,7 +24,7 @@ namespace BankAPI.Services
             return await _bancoDbContext.Accounts.FindAsync(id);
         }
 
-        public async Task<Account> Crear(CuentaDTO nuevaCuentaDTO)
+        public async Task<Account> Crear(CuentaDtoIn nuevaCuentaDTO)
         {
             var nuevaCuenta = new Account();
 
@@ -38,7 +38,7 @@ namespace BankAPI.Services
             return nuevaCuenta;
         }
 
-        public async Task Actualizar(int id, CuentaDTO cuentaDTO)
+        public async Task Actualizar(int id, CuentaDtoIn cuentaDTO)
         {
             var ExisteCuenta = await ObtenerPorId(id);
 
