@@ -21,7 +21,7 @@ namespace BankAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Account>> Obtener()
+        public async Task<IEnumerable<CuentaDtoOut>> Obtener()
         {
             return await cuentaServicio.ObtenerTodo();
         }
