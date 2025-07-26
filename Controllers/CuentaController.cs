@@ -27,9 +27,9 @@ namespace BankAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Account>> ObtenerPorId(int id)
+        public async Task<ActionResult<CuentaDtoOut>> ObtenerPorId(int id)
         {
-            var cuenta = await cuentaServicio.ObtenerPorId(id);
+            var cuenta = await cuentaServicio.ObtenerDtoPorId(id);
 
             if (cuenta == null)
             {
