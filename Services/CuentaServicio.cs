@@ -27,6 +27,20 @@ namespace BankAPI.Services
             }).ToListAsync();
         }
 
+        public async Task<CuentaDtoOut?> ObtenerDtoPorId(int id)
+        {
+            return await _bancoDbContext.Accounts.
+                Where(cuenta =>cuenta.Id == id).
+                Select(cuenta => new CuentaDtoOut
+                {
+                    Id = cuenta.Id,
+                    AccountName = cuenta.AccountTypeNavigation.Name,
+                    ClientName = cuenta.Client != null ? cuenta.Client.Name : " ",
+                    Balance = cuenta.Balance,
+                    RegDate = cuenta.RegDate
+                }).SingleOrDefaultAsync();
+        }
+
         public async Task<Account?> ObtenerPorId(int id)
         {
             return await _bancoDbContext.Accounts.FindAsync(id);
