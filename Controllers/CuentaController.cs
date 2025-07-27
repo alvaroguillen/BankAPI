@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BankAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class CuentaController:ControllerBase
     {
         private readonly CuentaServicio cuentaServicio;
@@ -20,7 +20,7 @@ namespace BankAPI.Controllers
             this.clienteServicio = clienteServicio;
         }
 
-        [HttpGet]
+        [HttpGet("obtenerTodo")]
         public async Task<IEnumerable<CuentaDtoOut>> Obtener()
         {
             return await cuentaServicio.ObtenerTodo();
@@ -39,7 +39,7 @@ namespace BankAPI.Controllers
             return Ok(cuenta);
         }
 
-        [HttpPost]
+        [HttpPost("crear")]
         public async Task<IActionResult> Crear(CuentaDtoIn cuentaDTO)
         {
             string ResultadoValidacion = await ValidacionCuenta(cuentaDTO);
@@ -52,7 +52,7 @@ namespace BankAPI.Controllers
             return CreatedAtAction(nameof(ObtenerPorId), new { id = nuevaCuenta.Id }, nuevaCuenta);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("editar/{id}")]
         public async Task<IActionResult> Actualizar(int id, CuentaDtoIn cuentaDTO)
         {
             if (id != cuentaDTO.Id)
@@ -81,7 +81,7 @@ namespace BankAPI.Controllers
 
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("eliminar/{id}")]
         public async Task<IActionResult> Eliminar(int id)
         {
             var eliminarCuenta = await cuentaServicio.ObtenerPorId(id);
