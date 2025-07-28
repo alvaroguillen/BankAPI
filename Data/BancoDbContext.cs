@@ -20,6 +20,8 @@ public partial class BancoDbContext : DbContext
 
     public virtual DbSet<AccountType> AccountTypes { get; set; }
 
+    public virtual DbSet<Administrator> Administrators { get; set; }
+
     public virtual DbSet<BankTransaction> BankTransactions { get; set; }
 
     public virtual DbSet<Client> Clients { get; set; }
@@ -59,6 +61,33 @@ public partial class BancoDbContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.RegDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<Administrator>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Administ__3214EC27094DC927");
+
+            entity.ToTable("Administrator");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.AdminType)
+                .HasMaxLength(30)
+                .IsUnicode(false);
+            entity.Property(e => e.Email)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Name)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.PhoneNumber)
+                .HasMaxLength(40)
+                .IsUnicode(false);
+            entity.Property(e => e.PwdHash)
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.RegDate)
