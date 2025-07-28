@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BankAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class CuentaController:ControllerBase
     {
         private readonly CuentaServicio cuentaServicio;
@@ -20,16 +20,16 @@ namespace BankAPI.Controllers
             this.clienteServicio = clienteServicio;
         }
 
-        [HttpGet]
-        public async Task<IEnumerable<Account>> Obtener()
+        [HttpGet("obtenerTodo")]
+        public async Task<IEnumerable<CuentaDtoOut>> Obtener()
         {
             return await cuentaServicio.ObtenerTodo();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Account>> ObtenerPorId(int id)
+        public async Task<ActionResult<CuentaDtoOut>> ObtenerPorId(int id)
         {
-            var cuenta = await cuentaServicio.ObtenerPorId(id);
+            var cuenta = await cuentaServicio.ObtenerDtoPorId(id);
 
             if (cuenta == null)
             {
@@ -39,8 +39,8 @@ namespace BankAPI.Controllers
             return Ok(cuenta);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Crear(CuentaDTO cuentaDTO)
+        [HttpPost("crear")]
+        public async Task<IActionResult> Crear(CuentaDtoIn cuentaDTO)
         {
             string ResultadoValidacion = await ValidacionCuenta(cuentaDTO);
             if (!ResultadoValidacion.Equals("valido"))
@@ -52,8 +52,8 @@ namespace BankAPI.Controllers
             return CreatedAtAction(nameof(ObtenerPorId), new { id = nuevaCuenta.Id }, nuevaCuenta);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Actualizar(int id, CuentaDTO cuentaDTO)
+        [HttpPut("editar/{id}")]
+        public async Task<IActionResult> Actualizar(int id, CuentaDtoIn cuentaDTO)
         {
             if (id != cuentaDTO.Id)
             {
@@ -81,7 +81,7 @@ namespace BankAPI.Controllers
 
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("eliminar/{id}")]
         public async Task<IActionResult> Eliminar(int id)
         {
             var eliminarCuenta = await cuentaServicio.ObtenerPorId(id);
@@ -102,7 +102,7 @@ namespace BankAPI.Controllers
             return NotFound(new { message = $"La cuenta con ID = {id} no existe." });
         }
 
-        public async Task<string> ValidacionCuenta(CuentaDTO cuentaDTO)
+        public async Task<string> ValidacionCuenta(CuentaDtoIn cuentaDTO)
         {
             string resultado = "valido";
             var tipoCuenta = await tipoCuentaServicio.ObtenerPorId(cuentaDTO.AccountType);

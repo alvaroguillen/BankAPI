@@ -14,9 +14,31 @@ namespace BankAPI.Services
             _bancoDbContext = bancoDbContext;
         }
 
-        public async Task<IEnumerable<Account>> ObtenerTodo()
+        public async Task<IEnumerable<CuentaDtoOut>> ObtenerTodo()
         {
-            return await _bancoDbContext.Accounts.ToListAsync();
+            return await _bancoDbContext.Accounts.Select(cuenta => new CuentaDtoOut
+            {
+                Id = cuenta.Id,
+                AccountName = cuenta.AccountTypeNavigation.Name,
+                ClientName = cuenta.Client != null ? cuenta.Client.Name : " ",
+                Balance = cuenta.Balance,
+                RegDate = cuenta.RegDate
+
+            }).ToListAsync();
+        }
+
+        public async Task<CuentaDtoOut?> ObtenerDtoPorId(int id)
+        {
+            return await _bancoDbContext.Accounts.
+                Where(cuenta =>cuenta.Id == id).
+                Select(cuenta => new CuentaDtoOut
+                {
+                    Id = cuenta.Id,
+                    AccountName = cuenta.AccountTypeNavigation.Name,
+                    ClientName = cuenta.Client != null ? cuenta.Client.Name : " ",
+                    Balance = cuenta.Balance,
+                    RegDate = cuenta.RegDate
+                }).SingleOrDefaultAsync();
         }
 
         public async Task<Account?> ObtenerPorId(int id)
@@ -24,7 +46,7 @@ namespace BankAPI.Services
             return await _bancoDbContext.Accounts.FindAsync(id);
         }
 
-        public async Task<Account> Crear(CuentaDTO nuevaCuentaDTO)
+        public async Task<Account> Crear(CuentaDtoIn nuevaCuentaDTO)
         {
             var nuevaCuenta = new Account();
 
@@ -38,7 +60,7 @@ namespace BankAPI.Services
             return nuevaCuenta;
         }
 
-        public async Task Actualizar(int id, CuentaDTO cuentaDTO)
+        public async Task Actualizar(int id, CuentaDtoIn cuentaDTO)
         {
             var ExisteCuenta = await ObtenerPorId(id);
 

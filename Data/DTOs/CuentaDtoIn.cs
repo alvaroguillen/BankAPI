@@ -1,6 +1,6 @@
 ﻿namespace BankAPI.Data.DTOs
 {
-    public class CuentaDTO
+    public class CuentaDtoIn
     {
         public int Id { get; set; }
 
