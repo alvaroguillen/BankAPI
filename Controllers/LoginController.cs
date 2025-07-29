@@ -29,7 +29,10 @@ namespace BankAPI.Controllers
 
             if(admin is null)
             {
+                //Console.WriteLine("Hash de Admin123: " + BCrypt.Net.BCrypt.HashPassword("Admin123"));
+
                 return BadRequest(new { message = "Credenciales invalidas."});
+                //return BadRequest(new { message = BCrypt.Net.BCrypt.HashPassword("Admin123")});
             }
 
             string jwtToken = GenerarToken(admin);
@@ -42,7 +45,8 @@ namespace BankAPI.Controllers
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, admin.Name),
-                new Claim(ClaimTypes.Email, admin.Email)
+                new Claim(ClaimTypes.Email, admin.Email),
+                new Claim("AdminType", admin.AdminType)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("JWT:Key").Value));
