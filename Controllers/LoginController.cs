@@ -2,6 +2,10 @@
 using BankAPI.Data.BankModels;
 using BankAPI.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace BankAPI.Controllers
 {
@@ -10,9 +14,12 @@ namespace BankAPI.Controllers
     public class LoginController : ControllerBase
     {
         private readonly LoginServicio loginServicio;
-        public LoginController(LoginServicio loginServicio)
+
+        private IConfiguration config;
+        public LoginController(LoginServicio loginServicio, IConfiguration config)
         {
             this.loginServicio = loginServicio;
+            this.config = config;
         }
 
         [HttpPost("autenticacion")]
@@ -25,7 +32,30 @@ namespace BankAPI.Controllers
                 return BadRequest(new { message = "Credenciales invalidas."});
             }
 
-            return Ok(new {token = "algun valor"});
+            string jwtToken = GenerarToken(admin);
+
+            return Ok(new {token = jwtToken});
+        }
+
+        private string GenerarToken(Administrator admin)
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, admin.Name),
+                new Claim(ClaimTypes.Email, admin.Email)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("JWT:Key").Value));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var securityToken = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(60),
+                signingCredentials: creds);
+
+            string token = new JwtSecurityTokenHandler().WriteToken(securityToken);
+
+            return token;
         }
     }
 }
