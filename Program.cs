@@ -15,6 +15,7 @@ builder.Services.AddSqlServer<BancoDbContext>(builder.Configuration.GetConnectio
 builder.Services.AddScoped<ClienteServicio>();
 builder.Services.AddScoped<CuentaServicio>();
 builder.Services.AddScoped<TipoCuentaServicio>();
+builder.Services.AddScoped<LoginServicio>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
