@@ -1,10 +1,12 @@
 ﻿using BankAPI.Data.BankModels;
 using BankAPI.Data.DTOs;
 using BankAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class CuentaController:ControllerBase
@@ -39,6 +41,7 @@ namespace BankAPI.Controllers
             return Ok(cuenta);
         }
 
+        [Authorize(Policy = "SuperAdmin")]
         [HttpPost("crear")]
         public async Task<IActionResult> Crear(CuentaDtoIn cuentaDTO)
         {
@@ -52,6 +55,7 @@ namespace BankAPI.Controllers
             return CreatedAtAction(nameof(ObtenerPorId), new { id = nuevaCuenta.Id }, nuevaCuenta);
         }
 
+        [Authorize(Policy = "SuperAdmin")]
         [HttpPut("editar/{id}")]
         public async Task<IActionResult> Actualizar(int id, CuentaDtoIn cuentaDTO)
         {
@@ -81,6 +85,7 @@ namespace BankAPI.Controllers
 
         }
 
+        [Authorize(Policy = "SuperAdmin")]
         [HttpDelete("eliminar/{id}")]
         public async Task<IActionResult> Eliminar(int id)
         {

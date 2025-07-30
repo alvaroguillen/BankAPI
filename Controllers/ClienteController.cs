@@ -1,10 +1,12 @@
 ﻿
-using BankAPI.Services;
 using BankAPI.Data.BankModels;
+using BankAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ClienteController : ControllerBase
@@ -34,6 +36,7 @@ namespace BankAPI.Controllers
             return Ok(cliente);
         }
 
+        [Authorize(Policy = "SuperAdmin")]
         [HttpPost("crear")]
         public async Task<IActionResult> Crear(Client cliente) 
         {
@@ -42,6 +45,7 @@ namespace BankAPI.Controllers
             return CreatedAtAction(nameof(ObtenerPorId), new {id = nuevoCliente.Id}, nuevoCliente);
         }
 
+        [Authorize(Policy = "SuperAdmin")]
         [HttpPut("editar/{id}")]
         public async Task<IActionResult> Actualizar(int id, Client cliente)
         {
@@ -63,6 +67,7 @@ namespace BankAPI.Controllers
 
         }
 
+        [Authorize(Policy = "SuperAdmin")]
         [HttpDelete("eliminar/{id}")]
         public async Task<IActionResult> Eliminar(int id)
         {
